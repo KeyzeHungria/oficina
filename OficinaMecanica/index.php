@@ -10,7 +10,11 @@
 <body class="bg-light">
 
 <?php include "menu.php"; ?>
- 
+
+<div class="container my-5 text-center">
+  <img src="img/logosemfundo.png" alt="Logo da Oficina" class="img-fluid" style="max-width: 400px;">
+</div>
+
 <footer class="bg-dark text-white text-center py-3 fixed-bottom">
   Sistema Oficina Mão na Graxa &copy; <?= date('Y') ?> — Desenvolvido por Gabriella Louzada, Naira Venâncio e Keyse
 </footer>

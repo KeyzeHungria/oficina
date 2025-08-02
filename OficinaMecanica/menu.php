@@ -1,7 +1,12 @@
 <?php
-   session_start();
-   if (!isset($_SESSION["usuario_id"]))
-     header("location:login.php");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION["usuario_id"])) {
+    header("location:login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -19,15 +24,15 @@
     .navbar-brand {
       font-weight: 700;
       font-size: 1.8rem;
-      color: #cccccc !important; /* cor básica cinza claro */
+      color: #cccccc !important;
     }
 
     .navbar-nav {
       width: 100%;
       display: flex;
-      flex-wrap: wrap; /* permite quebrar em múltiplas linhas */
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 0.75rem; /* espaçamento entre os links */
+      gap: 0.75rem;
     }
 
     .nav-link {
@@ -37,11 +42,10 @@
     }
 
     .nav-link:hover {
-      color: #fd0dfd6b !important; /* azul no hover */
+      color: #fd0dfd6b !important;
       background-color: transparent !important;
     }
 
-    /* Espaçamento para o texto do usuário e botão logout */
     .navbar-text {
       white-space: nowrap;
     }
@@ -65,18 +69,35 @@
 
       <div class="collapse navbar-collapse" id="menuNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="usuario.php">Usuário</a></li>
-          <li class="nav-item"><a class="nav-link" href="cliente.php">Cliente</a></li>
-          <li class="nav-item"><a class="nav-link" href="funcionario.php">Funcionário</a></li>
-          <li class="nav-item"><a class="nav-link" href="agendamento.php">Agendamento</a></li>
-          <li class="nav-item"><a class="nav-link" href="veiculo.php">Veículo</a></li>
-          <li class="nav-item"><a class="nav-link" href="pagamento.php">Pagamento</a></li>
-          <li class="nav-item"><a class="nav-link" href="produto.php">Produto</a></li>
-          <li class="nav-item"><a class="nav-link" href="relatorioEstoque.php">Estoque</a></li>
-          <li class="nav-item"><a class="nav-link" href="servico.php">Serviço</a></li>
-          <li class="nav-item"><a class="nav-link" href="item_servico.php">Item Serviço</a></li>
-          <li class="nav-item"><a class="nav-link" href="servico_funcionario.php">Serviço Funcionário</a></li>
-          <li class="nav-item"><a class="nav-link" href="tipo_pagamento.php">Tipo Pagamento</a></li>
+
+          <?php if ($_SESSION["usuario_tipo"] === 'admin'): ?>
+            <li class="nav-item"><a class="nav-link" href="usuario.php">Usuário</a></li>
+            <li class="nav-item"><a class="nav-link" href="cliente.php">Cliente</a></li>
+            <li class="nav-item"><a class="nav-link" href="funcionario.php">Funcionário</a></li>
+            <li class="nav-item"><a class="nav-link" href="agendamento.php">Agendamento</a></li>
+            <li class="nav-item"><a class="nav-link" href="veiculo.php">Veículo</a></li>
+            <li class="nav-item"><a class="nav-link" href="pagamento.php">Pagamento</a></li>
+            <li class="nav-item"><a class="nav-link" href="produto.php">Produto</a></li>
+            <li class="nav-item"><a class="nav-link" href="relatorioEstoque.php">Estoque</a></li>
+            <li class="nav-item"><a class="nav-link" href="servico.php">Serviço</a></li>
+            <li class="nav-item"><a class="nav-link" href="item_servico.php">Item Serviço</a></li>
+            <li class="nav-item"><a class="nav-link" href="servico_funcionario.php">Serviço Funcionário</a></li>
+            <li class="nav-item"><a class="nav-link" href="tipo_pagamento.php">Tipo Pagamento</a></li>
+
+          <?php else: ?>
+            <li class="nav-item"><a class="nav-link" href="cliente.php">Cliente</a></li>
+            <li class="nav-item"><a class="nav-link" href="agendamento.php">Agendamento</a></li>
+            <li class="nav-item"><a class="nav-link" href="veiculo.php">Veículo</a></li>
+            <li class="nav-item"><a class="nav-link" href="pagamento.php">Pagamento</a></li>
+            <li class="nav-item"><a class="nav-link" href="produto.php">Produto</a></li>
+            <li class="nav-item"><a class="nav-link" href="relatorioEstoque.php">Estoque</a></li>
+            <li class="nav-item"><a class="nav-link" href="servico.php">Serviço</a></li>
+            <li class="nav-item"><a class="nav-link" href="item_servico.php">Item Serviço</a></li>
+            <li class="nav-item"><a class="nav-link" href="servico_funcionario.php">Serviço Funcionário</a></li>
+            <li class="nav-item"><a class="nav-link" href="tipo_pagamento.php">Tipo Pagamento</a></li>
+            <li class="nav-item"><a class="nav-link" href="minha_conta.php">Minha Conta</a></li>
+          <?php endif; ?>
+
         </ul>
 
         <div class="d-flex align-items-center gap-3">
@@ -92,3 +113,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

@@ -9,6 +9,19 @@
   rel="stylesheet"
 />
 
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+
+<?php
+  // Tipo do usuário logado (para controle de permissões)
+  $usuarioTipoLogado = $_SESSION["usuario_tipo"] ?? 'usuario';
+  // Tipo do usuário que está sendo editado (ou padrão 'usuario' se for cadastro)
+  $tipoSelecionado = $_POST['tipo'] ?? $usuario['tipo'] ?? 'usuario';
+?>
+
 <div class="container py-5">
   <div class="card shadow-sm">
     <div class="card-header bg-dark text-white">
@@ -85,6 +98,23 @@
           />
         </div>
 
+        <div class="col-md-6">
+          <label for="tipo" class="form-label">Tipo de Usuário</label>
+          <select
+            id="tipo"
+            name="tipo"
+            class="form-select"
+            <?= $usuarioTipoLogado !== 'admin' ? 'disabled' : '' ?>
+            required
+          >
+            <option value="usuario" <?= $tipoSelecionado === 'usuario' ? 'selected' : '' ?>>Usuário</option>
+            <option value="admin" <?= $tipoSelecionado === 'admin' ? 'selected' : '' ?>>Administrador</option>
+          </select>
+          <?php if ($usuarioTipoLogado !== 'admin'): ?>
+            <input type="hidden" name="tipo" value="<?= $tipoSelecionado ?>" />
+          <?php endif; ?>
+        </div>
+
         <div class="col-12 pt-3">
           <button type="submit" class="btn btn-dark">
             <i class="bi bi-save me-2"></i>Salvar
@@ -97,3 +127,4 @@
     </div>
   </div>
 </div>
+

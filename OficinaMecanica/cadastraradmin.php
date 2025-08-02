@@ -17,7 +17,7 @@ $adminExiste = $usuario->buscaPorLogin("admin");
 <div class="container">
   <?php if (!$adminExiste): ?>
     <?php
-      $usuario->cadastrar("admin123", "admin", "", "admin");
+      $usuario->cadastrar("admin123", "admin", "", "admin", "admin");
     ?>
     <div class="alert alert-success" role="alert">
       ✅ Usuário <strong>admin</strong> cadastrado com sucesso!

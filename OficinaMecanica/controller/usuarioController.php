@@ -9,42 +9,78 @@ class usuarioController {
     }
 
     public function listar(){
-        $usuarios = $this->model->listaTodos();   
+        $usuarioTipo = $_SESSION["usuario_tipo"] ?? 'usuario';
+
+        if ($usuarioTipo === 'admin') {
+            $usuarios = $this->model->listaTodos();
+        } else {
+            $usuarios = [$this->model->listaId($_SESSION["usuario_id"])];
+        }
         include "view/listarUsuario.php";
     }
 
-    public function listarCb(){
-        $usuarios = $this->model->listaTodos();
-        return $usuarios;
+    public function login($login, $senha) {
+        return $this->model->login($login, $senha);
     }
 
-    public function cadastrar($senha, $nome, $email, $login){
-        // Verifica se o login já existe
+    public function listarCb(){
+        $usuarioTipo = $_SESSION["usuario_tipo"] ?? 'usuario';
+
+        if ($usuarioTipo === 'admin') {
+            return $this->model->listaTodos();
+        } else {
+            return [$this->model->listaId($_SESSION["usuario_id"])];
+        }
+    }
+
+    public function buscaIdParaLista($id){
+        return $this->model->listaId($id);
+    }
+
+    public function cadastrar($senha, $nome, $email, $login, $tipo){
+        if (($_SESSION["usuario_tipo"] ?? 'usuario') !== 'admin') {
+            header("location:usuario.php?erro=permissao_negada");
+            exit;
+        }
+
         $usuarioExistente = $this->model->buscaPorLogin($login);
         if ($usuarioExistente) {
             header("location:usuario.php?erro=login_duplicado");
             exit;
         }
 
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-        $this->model->cadastrar($senhaHash, $nome, $email, $login);
-        header("location:usuario.php?mensagem=Usuário cadastrado com sucesso&tipo=success");  
+        $this->model->cadastrar($senha, $nome, $email, $login, $tipo);
+        header("location:usuario.php?mensagem=Usuário cadastrado com sucesso&tipo=success");
+        exit;
     }
 
     public function buscaId($id){
+        $usuarioTipo = $_SESSION["usuario_tipo"] ?? 'usuario';
+        $usuarioIdLogado = $_SESSION["usuario_id"] ?? 0;
+
+        if ($usuarioTipo !== 'admin' && $id != $usuarioIdLogado) {
+            header("location:usuario.php?erro=permissao_negada");
+            exit;
+        }
+
         $usuario = $this->model->listaId($id);
         include "view/formUsuario.php";
     }
 
-    public function login($usuario, $senha){
-        $usuario = $this->model->login($usuario, $senha);
-        return $usuario;
-    }
+    public function alterar($id, $senha, $nome, $email, $login, $tipo){
+        $usuarioTipo = $_SESSION["usuario_tipo"] ?? 'usuario';
+        $usuarioIdLogado = $_SESSION["usuario_id"] ?? 0;
 
-    public function alterar($id, $senha, $nome, $email, $login){
+        if ($usuarioTipo !== 'admin' && $id != $usuarioIdLogado) {
+            header("location:usuario.php?erro=permissao_negada");
+            exit;
+        }
+
+        if ($usuarioTipo !== 'admin') {
+            $tipo = $this->model->listaId($id)['tipo'];
+        }
+
         $usuarioExistente = $this->model->buscaPorLogin($login);
-
-        // Se existe outro usuário com o mesmo login (id diferente), bloqueia
         if ($usuarioExistente && $usuarioExistente['idusuario'] != $id) {
             header("location:usuario.php?erro=login_duplicado&id=$id");
             exit;
@@ -53,19 +89,32 @@ class usuarioController {
         if (empty($senha)) {
             $usuarioAtual = $this->model->listaId($id);
             $senhaHashAtual = $usuarioAtual['senha'];
-            $this->model->alterarSemSenha($senhaHashAtual, $nome, $email, $login, $id);
+            $this->model->alterarSemSenha($senhaHashAtual, $nome, $email, $login, $tipo, $id);
         } else {
-            $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-            $this->model->alterar($senhaHash, $nome, $email, $login, $id);
+            $this->model->alterarComSenha($senha, $nome, $email, $login, $tipo, $id);
+        }
+
+        if ($id == $usuarioIdLogado) {
+            $_SESSION["usuario_nome"] = $nome;
+            $_SESSION["usuario_login"] = $login;
         }
 
         header("location:usuario.php?mensagem=Usuário atualizado com sucesso&tipo=success");
+        exit;
     }
 
     public function excluir($id){
+        if (($_SESSION["usuario_tipo"] ?? 'usuario') !== 'admin') {
+            header("location:usuario.php?erro=permissao_negada");
+            exit;
+        }
+
         $this->model->excluir($id);
         header("location:usuario.php?mensagem=Usuário excluído com sucesso&tipo=success");
+        exit;
     }
 }
-?>
+
+
+
 

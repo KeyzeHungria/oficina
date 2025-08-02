@@ -1,3 +1,8 @@
+<?php
+session_start();
+$usuarioTipoLogado = $_SESSION["usuario_tipo"] ?? 'usuario';
+?>
+
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
@@ -5,9 +10,11 @@
 <div class="container py-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Usuários</h2>
-    <a href="usuario.php?acao=novo" class="btn btn-dark">
-      <i class="bi bi-person-plus me-2"></i>Novo Usuário
-    </a>
+    <?php if ($usuarioTipoLogado === 'admin'): ?>
+      <a href="usuario.php?acao=novo" class="btn btn-dark">
+        <i class="bi bi-person-plus me-2"></i>Novo Usuário
+      </a>
+    <?php endif; ?>
   </div>
 
   <?php if (empty($usuarios)) : ?>
@@ -28,16 +35,19 @@
               <td><?= htmlspecialchars($usuario['nome']); ?></td>
               <td><?= htmlspecialchars($usuario['email']); ?></td>
               <td class="text-center">
-                <a href="usuario.php?acao=editar&id=<?= $usuario['idusuario']; ?>" class="btn btn-sm btn-outline-primary me-1">
+                <a href="usuario.php?acao=editar&id=<?= $usuario['idusuario']; ?>" class="btn btn-sm btn-outline-primary me-1" title="Editar">
                   <i class="bi bi-pencil-square"></i>
                 </a>
-                <button class="btn btn-sm btn-outline-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalConfirmarExclusao"
-                        data-id="<?= $usuario['idusuario']; ?>"
-                        data-nome="<?= htmlspecialchars($usuario['nome']); ?>">
-                  <i class="bi bi-trash"></i>
-                </button>
+                <?php if ($usuarioTipoLogado === 'admin'): ?>
+                  <button class="btn btn-sm btn-outline-danger"
+                          data-bs-toggle="modal"
+                          data-bs-target="#modalConfirmarExclusao"
+                          data-id="<?= $usuario['idusuario']; ?>"
+                          data-nome="<?= htmlspecialchars($usuario['nome']); ?>"
+                          title="Excluir">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                <?php endif; ?>
               </td>
             </tr>
           <?php endforeach; ?>
@@ -80,4 +90,5 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+
 

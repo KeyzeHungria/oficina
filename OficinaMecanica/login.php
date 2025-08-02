@@ -26,12 +26,13 @@ if (isset($_POST["login"]) && isset($_POST["senha"])) {
         $erro = "Usuário e/ou senha incorretos.";
         include "view/formLogin.php"; // Mostra o formulário com erro
     } else {
-        // Login OK: salva dados na sessão e redireciona para página protegida
+        // ✅ Login OK: salva dados na sessão, incluindo o tipo
         $_SESSION["usuario_id"] = $usuario["idusuario"];
         $_SESSION["usuario_nome"] = $usuario["nome"];
         $_SESSION["usuario_login"] = $usuario["login"];
+        $_SESSION["usuario_tipo"] = $usuario["tipo"]; // <--- NOVO: tipo = admin ou usuario
 
-        header("Location:index.php"); // Redirecione para onde quiser após login
+        header("Location: index.php"); // Redireciona após login
         exit();
     }
 } else {
@@ -48,3 +49,4 @@ if (isset($_POST["login"]) && isset($_POST["senha"])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
